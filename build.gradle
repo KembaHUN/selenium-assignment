@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.selenium.assignment'
+version = '1.0.0'
+sourceCompatibility = '17'
+targetCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.seleniumhq.selenium:selenium-java:4.27.0'
+    implementation 'io.github.bonigarcia:webdrivermanager:5.9.2'
+    testImplementation 'org.testng:testng:7.10.2'
+    implementation 'org.slf4j:slf4j-simple:2.0.16'
+}
+
+test {
+    useTestNG() {
+        suites 'testng.xml'
+    }
+    testLogging {
+        events "PASSED", "SKIPPED", "FAILED"
+        showStandardStreams = true
+    }
+}

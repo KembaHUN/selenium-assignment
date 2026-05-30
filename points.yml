@@ -8,7 +8,7 @@
 # ============================================================
 
 student:
-  website_under_test: ""
+  website_under_test: "https://2kdb.net/"
     
     
 # ----------------------------------------------------------
@@ -19,9 +19,9 @@ student:
 # This has no effect on your grade.
 # ----------------------------------------------------------
 ai_usage:
-  used: false
-  tools: ""           # e.g. "Claude, GitHub Copilot"
-  description: ""     # e.g. "Used Claude to generate initial Page Object 
+  used: true
+  tools: "Qwen3.5 with Kilo Code"           # e.g. "Claude, GitHub Copilot"
+  description: "Used as a coder agent for generating most of the source code, which I then refactored manually."     # e.g. "Used Claude to generate initial Page Object
                        #  classes, then modified them manually. Used Copilot 
                        #  for autocomplete while writing test methods."
                        
@@ -33,19 +33,19 @@ ai_usage:
 # ----------------------------------------------------------
 quality:
   gitignore:                 # required for grade 2+
-    done: false
+    done: true
     description: "Unnecessary files are ignored (.gitignore covers build output, IDE files, etc.)"
 
   structured_code:           # required for grade 3+
-    done: false
+    done: true
     description: "Code is organized into classes and functions, not one big file"
 
   readable_code:             # required for grade 4+
-    done: false
+    done: true
     description: "Function and method names describe what they do, test suite reads like a test description"
 
   low_redundancy:            # required for grade 5
-    done: false
+    done: true
     description: "Minimal code duplication, shared logic is extracted into reusable methods"
 
 # ----------------------------------------------------------
@@ -110,7 +110,7 @@ basic:
     description: "Project has at least 8 Java classes (cumulative with above)"
 
   explicit_wait:             # 3 pts | once
-    done: false
+    done: true
     description: "Use explicit wait (WebDriverWait with ExpectedConditions)"
     link: "https://www.selenium.dev/documentation/webdriver/waits/"
 
@@ -119,12 +119,12 @@ basic:
     description: "Read and verify the page title using getTitle()"
 
   page_object_pattern:       # 3 pts | once
-    done: false
+    done: true
     description: "Use Page Object pattern with at least 2 page classes"
     link: "https://www.selenium.dev/documentation/test_practices/encouraged/page_object_models/"
 
   base_page_class:           # 1 pt | once
-    done: false
+    done: true
     description: "Create a BasePage class that other page classes extend"
 
   readable_tests:            # 3 pts | once
@@ -136,7 +136,7 @@ basic:
 # ----------------------------------------------------------
 advanced:
   webdriver_config:          # 4 pts | once
-    done: false
+    done: true
     description: "Configure WebDriver with custom options (e.g. ChromeOptions, window size, user agent)"
     link: "https://www.selenium.dev/documentation/webdriver/drivers/options/"
 
