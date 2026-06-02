@@ -76,8 +76,8 @@ basic:
     done: false
     description: "Test a static page (verify text content, element presence, etc.)"
 
-  multiple_page_test:        # 3 pts | once
-    done: false
+  multiple_page_test:          # 3 pts | once
+    done: true
     description: "Define an array of URLs or page data, iterate over them and verify something on each page (e.g. check title or a specific element on 5 different pages using a loop)"
 
   complex_xpath:             # 1 pt each | repeatable | max 10
@@ -161,7 +161,7 @@ advanced:
     link: "https://www.selenium.dev/documentation/webdriver/elements/file_upload/"
 
   history_test:              # 4 pts | once
-    done: false
+    done: true
     description: "Test browser history navigation (e.g. back(), forward())"
     link: "https://www.selenium.dev/documentation/webdriver/interactions/navigation/"
 
