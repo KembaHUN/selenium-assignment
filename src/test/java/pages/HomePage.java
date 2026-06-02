@@ -70,23 +70,14 @@ public class HomePage extends BasePage {
             openUserMenu();
         }
         
-        // Click logout button using MouseEvent dispatch (works with React)
+        // Capture user button reference before logout to wait for staleness
+        WebElement userButtonBefore = driver.findElement(USER_BUTTON);
+        
+        // Click logout button
         WebElement logoutButton = waitForElementPresent(LOGOUT_BUTTON);
-        ((JavascriptExecutor) driver).executeScript(
-            "arguments[0].dispatchEvent(new MouseEvent('click', {bubbles: true, cancelable: true}));",
-            logoutButton
-        );
-        
-        // Wait for the user button to disappear (indicates logout completed)
-        try {
-            new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.invisibilityOfElementLocated(USER_BUTTON));
-        } catch (Exception e) {
-            // Timeout - continue anyway
-        }
-        
-        // Refresh the page to ensure logout state is reflected
-        driver.navigate().refresh();
+        logoutButton.click();
+        new WebDriverWait(driver, Duration.ofSeconds(3), Duration.ofMillis(100))
+            .until(ExpectedConditions.stalenessOf(userButtonBefore));
         
         // Return this HomePage instance (now in logged-out state)
         return this;
