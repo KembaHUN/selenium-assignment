@@ -15,6 +15,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Parameters;
 
 public class BaseTest {
 
@@ -34,8 +35,13 @@ public class BaseTest {
     }
 
     @BeforeMethod
-    public void setup() {
-        String browserName = Config.getBrowserName().toLowerCase();
+    @Parameters({"browser"})
+    public void setup(String browserName) {
+        // Use parameter from testng.xml if provided, otherwise fall back to config.properties
+        if (browserName == null || browserName.isEmpty()) {
+            browserName = Config.getBrowserName();
+        }
+        browserName = browserName.toLowerCase();
         WebDriver driver;
         
         switch (browserName) {

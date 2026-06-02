@@ -202,7 +202,7 @@ advanced:
     link: "https://www.selenium.dev/documentation/webdriver/browsers/chrome/"
 
   cross_browser_testing:     # 8 pts | once
-    done: false
+    done: true
     description: "Run the same tests on multiple browsers (e.g. Chrome and Firefox) using parameterization"
     link: "https://www.selenium.dev/documentation/webdriver/browsers/"
 
