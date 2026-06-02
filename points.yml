@@ -175,7 +175,7 @@ advanced:
     description: "Verify an e-mail was sent (e.g. registration activation link, password reset)"
 
   random_data:               # 8 pts | once
-    done: false
+    done: true
     description: "Generate random test data (e.g. random username, email) and use it in a test"
 
   download_files:            # 12 pts | once

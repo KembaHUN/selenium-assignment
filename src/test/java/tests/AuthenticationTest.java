@@ -3,6 +3,7 @@ package tests;
 import base.BasePage;
 import base.BaseTest;
 import base.Config;
+import base.RandomDataGenerator;
 import java.util.Set;
 import org.openqa.selenium.Cookie;
 import org.testng.Assert;
@@ -119,6 +120,48 @@ public class AuthenticationTest extends BaseTest {
             "isLoggedOut() should return true after logout");
         
         System.out.println("Logout test passed!");
+    }
+
+    @Test(priority = 5, dependsOnMethods = "testLoginWithInvalidCredentials")
+    public void testLoginWithRandomCredentialsFails() {
+        LoginPage loginPage = createPageObject(LoginPage.class);
+        
+        // Number of random login attempts to perform
+        int iterations = 5;
+        
+        System.out.println("Starting random credentials test with " + iterations + " iterations");
+        
+        for (int i = 0; i < iterations; i++) {
+            // Generate random credentials
+            String randomEmail = RandomDataGenerator.generateRandomEmail();
+            String randomPassword = RandomDataGenerator.generateRandomPassword();
+            
+            System.out.println("Attempt " + (i + 1) + ": Testing with random email='" + randomEmail + "', password='" + randomPassword + "'");
+            
+            // Navigate to login page (handles cookie consent and waits for page load)
+            loginPage.navigateToLoginPage(Config.getBaseUrl());
+            
+            // Perform login with random credentials
+            loginPage.enterEmail(randomEmail);
+            loginPage.enterPassword(randomPassword);
+            loginPage.clickLoginButton();
+            
+            // Verify we remain on the login page (not redirected to homepage)
+            Assert.assertTrue(loginPage.isOnLoginPage(),
+                "Should remain on login page with random credentials (attempt " + (i + 1) + ")");
+            
+            // Verify error message is displayed
+            Assert.assertTrue(loginPage.isErrorMessageDisplayed(),
+                "Error message should be displayed for random credentials (attempt " + (i + 1) + ")");
+            
+            // Verify page title matches login page exactly
+            Assert.assertTrue(loginPage.isPageTitleMatching("2KDB MyTEAM Database | Sign In | NBA 2K26"),
+                "Page title should match login page title (attempt " + (i + 1) + ")");
+            
+            System.out.println("Attempt " + (i + 1) + " PASSED: Random credentials were correctly rejected");
+        }
+        
+        System.out.println("Random credentials test passed! All " + iterations + " attempts were correctly rejected.");
     }
 
     /**
