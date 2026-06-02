@@ -1,0 +1,207 @@
+package tests;
+
+import base.BasePage;
+import base.BaseTest;
+import base.Config;
+import base.RandomDataGenerator;
+import java.util.Set;
+import org.openqa.selenium.Cookie;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import pages.HomePage;
+import pages.LoginPage;
+
+/**
+ * Test class for authentication-related functionality.
+ * Includes tests for cookie manipulation, login with valid/invalid credentials,
+ * logout, and testing with random credentials.
+ */
+public class AuthenticationTest extends BaseTest {
+
+    /**
+     * Tests cookie manipulation including adding, verifying, and deleting cookies.
+     * Verifies that the WebDriver can properly manage browser cookies.
+     */
+    @Test(priority = 1)
+    public void testCookieManipulation() {
+        // Navigate to homepage first
+        getDriver().get(Config.getBaseUrl());
+        
+        // Accept cookies via UI if consent dialog is present
+        new BasePage(getDriver()).acceptCookieConsent();
+        
+        // Get initial cookies and print them
+        Set<Cookie> initialCookies = getDriver().manage().getCookies();
+        System.out.println("Initial cookies count: " + initialCookies.size());
+        for (Cookie cookie : initialCookies) {
+            System.out.println("Cookie: " + cookie.getName() + " = " + cookie.getValue());
+        }
+        
+        // Add a custom test cookie
+        Cookie testCookie = new Cookie("selenium_test_cookie", "test_value");
+        getDriver().manage().addCookie(testCookie);
+        System.out.println("Added test cookie: selenium_test_cookie");
+        
+        // Verify cookie was added using BasePage helper
+        String cookieValue = getCookieValue("selenium_test_cookie");
+        Assert.assertNotNull(cookieValue, "Test cookie should be added");
+        Assert.assertEquals(cookieValue, "test_value", "Cookie value should match");
+        System.out.println("Verified test cookie exists with value: " + cookieValue);
+        
+        // Delete the test cookie
+        getDriver().manage().deleteCookieNamed("selenium_test_cookie");
+        System.out.println("Deleted test cookie: selenium_test_cookie");
+        
+        // Verify cookie was deleted
+        cookieValue = getCookieValue("selenium_test_cookie");
+        Assert.assertNull(cookieValue, "Test cookie should be deleted");
+        
+        System.out.println("Cookie manipulation test passed!");
+    }
+
+    /**
+     * Tests login with valid credentials.
+     * Verifies that the user is redirected to the homepage and the user avatar is displayed.
+     * Depends on: testCookieManipulation
+     */
+    @Test(priority = 2, dependsOnMethods = "testCookieManipulation")
+    public void testLoginWithValidCredentials() {
+        LoginPage loginPage = createPageObject(LoginPage.class);
+        
+        // Navigate to login page and login, getting HomePage object
+        loginPage.navigateToLoginPage(Config.getBaseUrl());
+        HomePage homePage = loginPage.loginAndGoToHomePage(Config.getTestEmail(), Config.getTestPassword());
+        
+        // Verify login was successful using HomePage
+        Assert.assertTrue(homePage.isUserLoggedIn(),
+            "User should be logged in - user avatar should be displayed");
+        
+        // Verify page title changed from login page to homepage
+        Assert.assertTrue(homePage.isPageTitleMatching("2KDB MyTEAM Database | NBA 2K26"),
+            "Page title should match '2KDB MyTEAM Database | NBA 2K26' after successful login");
+        
+        System.out.println("Login with valid credentials test passed!");
+    }
+
+    /**
+     * Tests login with invalid credentials.
+     * Verifies that the user remains on the login page and an error message is displayed.
+     * Depends on: testCookieManipulation
+     */
+    @Test(priority = 3, dependsOnMethods = "testCookieManipulation")
+    public void testLoginWithInvalidCredentials() {
+        LoginPage loginPage = createPageObject(LoginPage.class);
+        
+        // Navigate to login page (handles cookie consent and waits for page load)
+        loginPage.navigateToLoginPage(Config.getBaseUrl());
+        
+        // Perform login with invalid credentials
+        loginPage.enterEmail(Config.getInvalidEmail());
+        loginPage.enterPassword(Config.getInvalidPassword());
+        loginPage.clickLoginButton();
+        
+        // Verify we remain on the login page (not redirected to homepage)
+        Assert.assertTrue(loginPage.isOnLoginPage(),
+            "Should remain on login page with invalid credentials");
+        
+        // Verify error message is displayed
+        Assert.assertTrue(loginPage.isErrorMessageDisplayed(),
+            "Error message should be displayed for invalid credentials");
+        
+        // Verify page title matches login page exactly
+        Assert.assertTrue(loginPage.isPageTitleMatching("2KDB MyTEAM Database | Sign In | NBA 2K26"),
+            "Page title should match '2KDB MyTEAM Database | Sign In | NBA 2K26' indicating we're still on the login page");
+        
+        System.out.println("Login with invalid credentials test passed!");
+    }
+
+    /**
+     * Tests the logout functionality.
+     * Verifies that after logout, the user button is no longer present.
+     * Depends on: testLoginWithValidCredentials
+     */
+    @Test(priority = 4, dependsOnMethods = "testLoginWithValidCredentials")
+    public void testLogout() {
+        LoginPage loginPage = createPageObject(LoginPage.class);
+        
+        // Navigate to login page and login, getting HomePage object
+        loginPage.navigateToLoginPage(Config.getBaseUrl());
+        HomePage homePage = loginPage.loginAndGoToHomePage(Config.getTestEmail(), Config.getTestPassword());
+        
+        // Verify we're logged in by checking the home page
+        Assert.assertTrue(homePage.isUserLoggedIn(),
+            "User should be logged in on the homepage");
+        
+        // Perform logout - stays on HomePage but user is logged out
+        homePage = homePage.logout();
+        
+        // Verify user is no longer logged in (user button should be gone)
+        Assert.assertFalse(homePage.isUserLoggedIn(),
+            "User should not be logged in after logout");
+        
+        // Verify using the isLoggedOut() helper method
+        Assert.assertTrue(homePage.isLoggedOut(),
+            "isLoggedOut() should return true after logout");
+        
+        System.out.println("Logout test passed!");
+    }
+
+    /**
+     * Tests that login fails consistently with randomly generated credentials.
+     * Performs multiple iterations with different random email/password combinations.
+     * Verifies that each attempt results in an error message and stays on the login page.
+     * Depends on: testLoginWithInvalidCredentials
+     */
+    @Test(priority = 5, dependsOnMethods = "testLoginWithInvalidCredentials")
+    public void testLoginWithRandomCredentialsFails() {
+        LoginPage loginPage = createPageObject(LoginPage.class);
+        
+        // Number of random login attempts to perform
+        int iterations = 5;
+        
+        System.out.println("Starting random credentials test with " + iterations + " iterations");
+        
+        for (int i = 0; i < iterations; i++) {
+            // Generate random credentials
+            String randomEmail = RandomDataGenerator.generateRandomEmail();
+            String randomPassword = RandomDataGenerator.generateRandomPassword();
+            
+            System.out.println("Attempt " + (i + 1) + ": Testing with random email='" + randomEmail + "', password='" + randomPassword + "'");
+            
+            // Navigate to login page (handles cookie consent and waits for page load)
+            loginPage.navigateToLoginPage(Config.getBaseUrl());
+            
+            // Perform login with random credentials
+            loginPage.enterEmail(randomEmail);
+            loginPage.enterPassword(randomPassword);
+            loginPage.clickLoginButton();
+            
+            // Verify we remain on the login page (not redirected to homepage)
+            Assert.assertTrue(loginPage.isOnLoginPage(),
+                "Should remain on login page with random credentials (attempt " + (i + 1) + ")");
+            
+            // Verify error message is displayed
+            Assert.assertTrue(loginPage.isErrorMessageDisplayed(),
+                "Error message should be displayed for random credentials (attempt " + (i + 1) + ")");
+            
+            // Verify page title matches login page exactly
+            Assert.assertTrue(loginPage.isPageTitleMatching("2KDB MyTEAM Database | Sign In | NBA 2K26"),
+                "Page title should match login page title (attempt " + (i + 1) + ")");
+            
+            System.out.println("Attempt " + (i + 1) + " PASSED: Random credentials were correctly rejected");
+        }
+        
+        System.out.println("Random credentials test passed! All " + iterations + " attempts were correctly rejected.");
+    }
+
+    /**
+     * Helper method to get cookie value by name.
+     * @param name the name of the cookie to retrieve
+     * @return the cookie value, or null if the cookie doesn't exist
+     */
+    private String getCookieValue(String name) {
+        Cookie cookie = getDriver().manage().getCookieNamed(name);
+        return cookie != null ? cookie.getValue() : null;
+    }
+
+}
