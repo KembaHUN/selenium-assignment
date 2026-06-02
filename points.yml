@@ -53,7 +53,7 @@ quality:
 # ----------------------------------------------------------
 basic:
   login_form:                # 3 pts | once
-    done: false
+    done: true
     description: "Fill a simple form and submit it (e.g. login with username and password)"
 
   form_with_user:            # 3 pts | once
@@ -65,11 +65,11 @@ basic:
     description: "Log out from the application and verify it"
 
   fill_input:                # 1 pt each | repeatable | max 10
-    count: 0
+    count: 1
     description: "Fill an input field (text, radio, checkbox, date, etc.) — each different type counts as one"
 
   send_form:                 # 1 pt each | repeatable | max 10
-    count: 0
+    count: 1
     description: "Submit a form (each distinct form counts as one)"
 
   static_page_test:          # 2 pts | once
@@ -81,7 +81,7 @@ basic:
     description: "Define an array of URLs or page data, iterate over them and verify something on each page (e.g. check title or a specific element on 5 different pages using a loop)"
 
   complex_xpath:             # 1 pt each | repeatable | max 10
-    count: 0
+    count: 2
     description: "Use a complex XPath expression (e.g. //div[@class='content']//a[contains(@href,'profile')])"
 
   textarea:                  # 1 pt | once
@@ -98,7 +98,7 @@ basic:
     description: "Select or verify a radio button"
 
   at_least_4_classes:        # 3 pts | once
-    done: false
+    done: true
     description: "Project has at least 4 Java classes"
 
   at_least_6_classes:        # 3 pts | once
@@ -128,7 +128,7 @@ basic:
     description: "Create a BasePage class that other page classes extend"
 
   readable_tests:            # 3 pts | once
-    done: false
+    done: true
     description: "Test methods have descriptive names so the suite reads like a test specification"
 
 # ----------------------------------------------------------
@@ -141,7 +141,7 @@ advanced:
     link: "https://www.selenium.dev/documentation/webdriver/drivers/options/"
 
   cookie_manipulation:       # 6 pts | once
-    done: false
+    done: true
     description: "Manipulate cookies meaningfully (e.g. add/delete/read cookies, skip consent popup)"
     link: "https://www.selenium.dev/documentation/webdriver/interactions/cookies/"
 
@@ -166,7 +166,7 @@ advanced:
     link: "https://www.selenium.dev/documentation/webdriver/interactions/navigation/"
 
   test_dependencies:         # 4 pts | once
-    done: false
+    done: true
     description: "Make a test method depend on another using dependsOnMethods or dependsOnGroups — e.g. a logout test that only runs if login passed"
     link: "https://testng.org/#_test_methods_classes_and_groups"
     
@@ -183,11 +183,11 @@ advanced:
     description: "Download one or more files to a folder and verify they were saved"
 
   config_file:               # 6 pts | once
-    done: false
+    done: true
     description: "Store test settings in an external file (e.g. .properties, .yml, or .env) and read them at runtime — things like base URL, username, password, browser type. No hardcoded values in your test code"
 
   javascript_executor:       # 4 pts | once
-    done: false
+    done: true
     description: "Use JavascriptExecutor to perform an action (e.g. scroll, click hidden element)"
     link: "https://www.selenium.dev/selenium/docs/api/java/org/openqa/selenium/JavascriptExecutor.html"
     
@@ -197,7 +197,7 @@ advanced:
     link: "https://www.browserstack.com/guide/take-screenshots-in-selenium"
     
   headless_execution:        # 4 pts | once
-    done: false
+    done: true
     description: "Run tests in headless mode (browser without visible UI)"
     link: "https://www.selenium.dev/documentation/webdriver/browsers/chrome/"
 

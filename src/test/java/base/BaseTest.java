@@ -1,20 +1,23 @@
 package base;
 
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
 import java.lang.reflect.Constructor;
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BaseTest {
-
-    protected static final String BASE_URL = "https://2kdb.net/";
-    protected static final int IMPLICIT_WAIT_SECONDS = 10;
-    protected static final int PAGE_LOAD_TIMEOUT_SECONDS = 30;
 
     private static final ThreadLocal<WebDriver> driverThread = new ThreadLocal<>();
 
@@ -33,17 +36,60 @@ public class BaseTest {
 
     @BeforeMethod
     public void setup() {
-        WebDriverManager.chromedriver().setup();
+        String browserName = Config.getBrowserName().toLowerCase();
+        WebDriver driver;
         
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--start-maximized");
-        options.addArguments("--disable-notifications");
-        options.addArguments("--disable-popup-blocking");
+        switch (browserName) {
+            case "firefox":
+                WebDriverManager.firefoxdriver().setup();
+                FirefoxOptions firefoxOptions = new FirefoxOptions();
+                firefoxOptions.addArguments("--start-maximized");
+                if (Config.isHeadless()) {
+                    firefoxOptions.addArguments("--headless");
+                }
+                driver = new FirefoxDriver(firefoxOptions);
+                break;
+                
+            case "edge":
+                WebDriverManager.edgedriver().setup();
+                EdgeOptions edgeOptions = new EdgeOptions();
+                edgeOptions.addArguments("--start-maximized");
+                edgeOptions.addArguments("--disable-notifications");
+                edgeOptions.addArguments("--disable-popup-blocking");
+                if (Config.isHeadless()) {
+                    edgeOptions.addArguments("--headless");
+                }
+                driver = new EdgeDriver(edgeOptions);
+                break;
+                
+            case "chrome":
+            default:
+                WebDriverManager.chromedriver().setup();
+                ChromeOptions chromeOptions = new ChromeOptions();
+                chromeOptions.addArguments("--start-maximized");
+                chromeOptions.addArguments("--disable-notifications");
+                chromeOptions.addArguments("--disable-popup-blocking");
+                chromeOptions.addArguments("--disable-blink-features=AutomationControlled");
+                chromeOptions.addArguments("--disable-gpu");
+                chromeOptions.addArguments("--no-sandbox");
+                chromeOptions.addArguments("--disable-dev-shm-usage");
+                if (Config.isHeadless()) {
+                    chromeOptions.addArguments("--headless=new");
+                }
+                // Set a realistic user agent to avoid detection
+                chromeOptions.addArguments("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36");
+                // Add additional options to mimic real browser behavior
+                Map<String, Object> prefs = new HashMap<>();
+                prefs.put("profile.default_content_setting_values.notifications", 2);
+                chromeOptions.setExperimentalOption("prefs", prefs);
+                chromeOptions.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
+                driver = new ChromeDriver(chromeOptions);
+                break;
+        }
         
-        WebDriver driver = new ChromeDriver(options);
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(IMPLICIT_WAIT_SECONDS));
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(PAGE_LOAD_TIMEOUT_SECONDS));
-        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(Config.getImplicitWaitSeconds()));
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(Config.getPageLoadTimeoutSeconds()));
+        driver.manage().window().setSize(new Dimension(Config.getWindowWidth(), Config.getWindowHeight()));
         
         driverThread.set(driver);
     }
