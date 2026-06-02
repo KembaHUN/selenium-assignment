@@ -19,6 +19,9 @@ import org.testng.ITestResult;
  */
 public class ScreenshotListener implements ITestListener {
 
+    /**
+     * Directory name where screenshots are saved.
+     */
     private static final String SCREENSHOT_DIR = "screenshots";
 
     @Override
@@ -70,8 +73,6 @@ public class ScreenshotListener implements ITestListener {
                 BaseTest baseTest = (BaseTest) testInstance;
                 return baseTest.getDriver();
             }
-            
-            // Try to get driver via reflection if not directly accessible
             return null;
         } catch (Exception e) {
             System.err.println("Error getting driver from test instance: " + e.getMessage());
@@ -79,31 +80,61 @@ public class ScreenshotListener implements ITestListener {
         }
     }
 
+    /**
+     * Called when a test method starts.
+     * Intentionally not used - only test failures trigger screenshots.
+     * @param result the test result
+     */
     @Override
     public void onTestStart(ITestResult result) {
         // Not used
     }
 
+    /**
+     * Called when a test method succeeds.
+     * Intentionally not used - only test failures trigger screenshots.
+     * @param result the test result
+     */
     @Override
     public void onTestSuccess(ITestResult result) {
         // Not used
     }
 
+    /**
+     * Called when a test method is skipped.
+     * Intentionally not used - only test failures trigger screenshots.
+     * @param result the test result
+     */
     @Override
     public void onTestSkipped(ITestResult result) {
         // Not used
     }
 
+    /**
+     * Called when a test method fails but is within the success percentage threshold.
+     * Intentionally not used - only test failures trigger screenshots.
+     * @param result the test result
+     */
     @Override
     public void onTestFailedButWithinSuccessPercentage(ITestResult result) {
         // Not used
     }
 
+    /**
+     * Called when a test context starts.
+     * Intentionally not used - only test failures trigger screenshots.
+     * @param context the test context
+     */
     @Override
     public void onStart(ITestContext context) {
         // Not used
     }
 
+    /**
+     * Called when a test context finishes.
+     * Intentionally not used - only test failures trigger screenshots.
+     * @param context the test context
+     */
     @Override
     public void onFinish(ITestContext context) {
         // Not used

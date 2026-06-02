@@ -17,14 +17,44 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Parameters;
 
+/**
+ * Base test class that provides common WebDriver management and setup/teardown functionality.
+ * All test classes should extend this class to gain access to the WebDriver instance
+ * and automatic browser initialization.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Thread-local WebDriver for parallel test execution</li>
+ *   <li>Support for Chrome, Firefox, and Edge browsers</li>
+ *   <li>Configurable headless mode via config.properties</li>
+ *   <li>Automatic driver setup using WebDriverManager</li>
+ *   <li>Page object factory method for creating page instances</li>
+ * </ul>
+ */
 public class BaseTest {
 
+    /**
+     * Thread-local storage for the WebDriver instance.
+     * Ensures each test thread has its own isolated driver instance.
+     */
     private static final ThreadLocal<WebDriver> driverThread = new ThreadLocal<>();
 
+    /**
+     * Returns the WebDriver instance for the current test thread.
+     * @return the WebDriver instance
+     */
     protected WebDriver getDriver() {
         return driverThread.get();
     }
 
+    /**
+     * Creates a new page object instance of the specified class.
+     * Uses reflection to instantiate page objects with the WebDriver constructor argument.
+     * @param <T> the page class type extending BasePage
+     * @param pageClass the class of the page object to create
+     * @return a new instance of the page class
+     * @throws RuntimeException if instantiation fails
+     */
     protected <T extends BasePage> T createPageObject(Class<T> pageClass) {
         try {
             Constructor<T> constructor = pageClass.getConstructor(WebDriver.class);
@@ -34,6 +64,12 @@ public class BaseTest {
         }
     }
 
+    /**
+     * Sets up the WebDriver before each test method.
+     * Initializes the browser based on the browserName parameter or config.properties.
+     * Configures browser options including headless mode, window size, and timeouts.
+     * @param browserName the name of the browser to use (chrome, firefox, edge)
+     */
     @BeforeMethod
     @Parameters({"browser"})
     public void setup(String browserName) {
@@ -99,6 +135,10 @@ public class BaseTest {
         driverThread.set(driver);
     }
 
+    /**
+     * Tears down the WebDriver after each test method.
+     * Quits the browser and removes the driver from thread-local storage.
+     */
     @AfterMethod
     public void teardown() {
         if (driverThread.get() != null) {

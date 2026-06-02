@@ -11,8 +11,17 @@ import org.testng.annotations.Test;
 import pages.HomePage;
 import pages.LoginPage;
 
+/**
+ * Test class for authentication-related functionality.
+ * Includes tests for cookie manipulation, login with valid/invalid credentials,
+ * logout, and testing with random credentials.
+ */
 public class AuthenticationTest extends BaseTest {
 
+    /**
+     * Tests cookie manipulation including adding, verifying, and deleting cookies.
+     * Verifies that the WebDriver can properly manage browser cookies.
+     */
     @Test(priority = 1)
     public void testCookieManipulation() {
         // Navigate to homepage first
@@ -50,6 +59,11 @@ public class AuthenticationTest extends BaseTest {
         System.out.println("Cookie manipulation test passed!");
     }
 
+    /**
+     * Tests login with valid credentials.
+     * Verifies that the user is redirected to the homepage and the user avatar is displayed.
+     * Depends on: testCookieManipulation
+     */
     @Test(priority = 2, dependsOnMethods = "testCookieManipulation")
     public void testLoginWithValidCredentials() {
         LoginPage loginPage = createPageObject(LoginPage.class);
@@ -69,6 +83,11 @@ public class AuthenticationTest extends BaseTest {
         System.out.println("Login with valid credentials test passed!");
     }
 
+    /**
+     * Tests login with invalid credentials.
+     * Verifies that the user remains on the login page and an error message is displayed.
+     * Depends on: testCookieManipulation
+     */
     @Test(priority = 3, dependsOnMethods = "testCookieManipulation")
     public void testLoginWithInvalidCredentials() {
         LoginPage loginPage = createPageObject(LoginPage.class);
@@ -96,6 +115,11 @@ public class AuthenticationTest extends BaseTest {
         System.out.println("Login with invalid credentials test passed!");
     }
 
+    /**
+     * Tests the logout functionality.
+     * Verifies that after logout, the user button is no longer present.
+     * Depends on: testLoginWithValidCredentials
+     */
     @Test(priority = 4, dependsOnMethods = "testLoginWithValidCredentials")
     public void testLogout() {
         LoginPage loginPage = createPageObject(LoginPage.class);
@@ -122,6 +146,12 @@ public class AuthenticationTest extends BaseTest {
         System.out.println("Logout test passed!");
     }
 
+    /**
+     * Tests that login fails consistently with randomly generated credentials.
+     * Performs multiple iterations with different random email/password combinations.
+     * Verifies that each attempt results in an error message and stays on the login page.
+     * Depends on: testLoginWithInvalidCredentials
+     */
     @Test(priority = 5, dependsOnMethods = "testLoginWithInvalidCredentials")
     public void testLoginWithRandomCredentialsFails() {
         LoginPage loginPage = createPageObject(LoginPage.class);
@@ -165,7 +195,9 @@ public class AuthenticationTest extends BaseTest {
     }
 
     /**
-     * Helper method to get cookie value using BasePage methods.
+     * Helper method to get cookie value by name.
+     * @param name the name of the cookie to retrieve
+     * @return the cookie value, or null if the cookie doesn't exist
      */
     private String getCookieValue(String name) {
         Cookie cookie = getDriver().manage().getCookieNamed(name);

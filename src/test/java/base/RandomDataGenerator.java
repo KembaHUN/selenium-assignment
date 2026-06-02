@@ -35,7 +35,7 @@ public class RandomDataGenerator {
      * @return a random password string
      */
     public static String generateRandomPassword() {
-        return generateRandomPassword(getRandomLength(8, 20));
+        return generateRandomPasswordWithLength(getRandomLength(8, 20));
     }
 
     /**
@@ -46,16 +46,6 @@ public class RandomDataGenerator {
      */
     private static int getRandomLength(int min, int max) {
         return random.nextInt(max - min + 1) + min;
-    }
-
-    /**
-     * Generates a random password with specified length.
-     * The password will contain a mix of uppercase, lowercase, digits, and special characters.
-     * @param length the desired password length
-     * @return a random password string
-     */
-    private static String generateRandomPassword(int length) {
-        return generateRandomPasswordWithLength(length);
     }
 
     /**

@@ -9,9 +9,29 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+/**
+ * Page object for the authenticated home page (2KDB MyTEAM Database).
+ * Provides methods for verifying login status and performing logout.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>User login status verification via user button detection</li>
+ *   <li>User menu interaction with JavaScript click handling</li>
+ *   <li>Logout functionality with staleness detection</li>
+ *   <li>Page title verification</li>
+ * </ul>
+ */
 public class HomePage extends BasePage {
 
+    /**
+     * Locator for the user button (avatar) that opens the user menu.
+     * Present only when user is logged in.
+     */
     private static final By USER_BUTTON = By.xpath("//button[@data-with-left-section='true' and .//span[contains(@class, 'mantine-Avatar-placeholder')]]");
+    
+    /**
+     * Locator for the logout button in the user menu.
+     */
     private static final By LOGOUT_BUTTON = By.xpath("//button[@role='menuitem' and contains(., 'Logout')]");
 
     public HomePage(WebDriver driver) {

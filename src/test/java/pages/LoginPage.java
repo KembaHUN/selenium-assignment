@@ -7,17 +7,49 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+/**
+ * Page object for the login page (auth/signin).
+ * Provides methods for interacting with login form elements and performing login actions.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Email and password input handling</li>
+ *   <li>Login button click with wait for redirect or error</li>
+ *   <li>Error message detection for invalid credentials</li>
+ *   <li>Fluent API methods for method chaining</li>
+ * </ul>
+ */
 public class LoginPage extends BasePage {
 
+    /**
+     * Locator for the email input field.
+     */
     private static final By EMAIL_INPUT = By.name("email");
+    
+    /**
+     * Locator for the password input field.
+     */
     private static final By PASSWORD_INPUT = By.name("password");
+    
+    /**
+     * Locator for the login submit button.
+     */
     private static final By LOGIN_BUTTON = By.cssSelector("button[type='submit']");
+    
+    /**
+     * Locator for the error message container displayed on invalid login.
+     */
     private static final By ERROR_MESSAGE = By.cssSelector(".mantine-InputWrapper-error");
 
     public LoginPage(WebDriver driver) {
         super(driver);
     }
 
+    /**
+     * Navigates to the login page and accepts cookie consent if present.
+     * @param baseUrl the base URL from configuration
+     * @return this LoginPage instance for method chaining
+     */
     public LoginPage navigateToLoginPage(String baseUrl) {
         navigateTo(baseUrl + "auth/signin");
         acceptCookieConsent();
@@ -25,6 +57,11 @@ public class LoginPage extends BasePage {
         return this;
     }
 
+    /**
+     * Enters an email address into the email input field.
+     * @param email the email address to enter
+     * @return this LoginPage instance for method chaining
+     */
     public LoginPage enterEmail(String email) {
         sendKeys(EMAIL_INPUT, email);
         return this;
@@ -32,6 +69,7 @@ public class LoginPage extends BasePage {
 
     /**
      * Waits for the login page elements to be visible.
+     * Refreshes the page if the email input is not initially found.
      */
     private void waitForLoginPageToLoad() {
         try {
@@ -43,11 +81,21 @@ public class LoginPage extends BasePage {
         }
     }
 
+    /**
+     * Enters a password into the password input field.
+     * @param password the password to enter
+     * @return this LoginPage instance for method chaining
+     */
     public LoginPage enterPassword(String password) {
         sendKeys(PASSWORD_INPUT, password);
         return this;
     }
 
+    /**
+     * Clicks the login button and waits for either a redirect (valid credentials)
+     * or an error message to appear (invalid credentials).
+     * @return this LoginPage instance for method chaining
+     */
     public LoginPage clickLoginButton() {
         clickElement(LOGIN_BUTTON);
         // Wait briefly for either redirect (valid) or error message (invalid)
@@ -86,14 +134,26 @@ public class LoginPage extends BasePage {
         return new HomePage(driver);
     }
 
+    /**
+     * Checks if the error message is displayed on the page.
+     * @return true if error message is displayed, false otherwise
+     */
     public boolean isErrorMessageDisplayed() {
         return isElementDisplayed(ERROR_MESSAGE);
     }
 
+    /**
+     * Checks if the email input field is displayed on the page.
+     * @return true if email input is displayed, false otherwise
+     */
     public boolean isEmailInputDisplayed() {
         return isElementDisplayed(EMAIL_INPUT);
     }
 
+    /**
+     * Checks if the password input field is displayed on the page.
+     * @return true if password input is displayed, false otherwise
+     */
     public boolean isPasswordInputDisplayed() {
         return isElementDisplayed(PASSWORD_INPUT);
     }
@@ -112,13 +172,5 @@ public class LoginPage extends BasePage {
      */
     public String getPageTitle() {
         return driver.getTitle();
-    }
-
-    /**
-     * Gets the current page URL.
-     * @return the page URL
-     */
-    public String getPageUrl() {
-        return driver.getCurrentUrl();
     }
 }

@@ -10,11 +10,33 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+/**
+ * Base page object class that provides common WebDriver operations and wait utilities.
+ * All page objects should extend this class to gain access to helper methods.
+ * <p>
+ * Features:
+ * <ul>
+ *   <li>Explicit wait methods for element visibility, clickability, and presence</li>
+ *   <li>JavaScript-based click handling to bypass overlay elements</li>
+ *   <li>Cookie consent dialog handling for 2kdb.net</li>
+ *   <li>Page navigation and title verification utilities</li>
+ * </ul>
+ */
 public class BasePage {
 
+    /**
+     * The WebDriver instance used for all browser operations.
+     */
     protected WebDriver driver;
+    
+    /**
+     * WebDriverWait instance with default timeout for explicit waits.
+     */
     protected WebDriverWait wait;
 
+    /**
+     * Default timeout in seconds for explicit waits.
+     */
     protected static final int DEFAULT_TIMEOUT_SECONDS = 10;
 
     public BasePage(WebDriver driver) {
@@ -22,30 +44,60 @@ public class BasePage {
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_TIMEOUT_SECONDS));
     }
 
+    /**
+     * Waits for an element to be visible on the page.
+     * @param locator the By locator to find the element
+     * @return the visible WebElement
+     */
     protected WebElement waitForElementVisible(By locator) {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
+    /**
+     * Waits for an element to be clickable on the page.
+     * @param locator the By locator to find the element
+     * @return the clickable WebElement
+     */
     protected WebElement waitForElementClickable(By locator) {
         return wait.until(ExpectedConditions.elementToBeClickable(locator));
     }
 
+    /**
+     * Waits for an element to be present in the DOM.
+     * @param locator the By locator to find the element
+     * @return the present WebElement
+     */
     protected WebElement waitForElementPresent(By locator) {
         return wait.until(ExpectedConditions.presenceOfElementLocated(locator));
     }
 
+    /**
+     * Clicks an element using JavaScript to bypass overlay elements like ads.
+     * @param locator the By locator to find the element
+     */
     protected void clickElement(By locator) {
         WebElement element = waitForElementClickable(locator);
         // Use JavaScriptExecutor to click, bypassing any overlaying elements like ads
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
     }
 
+    /**
+     * Sends text input to an element after clearing its current value.
+     * @param locator the By locator to find the element
+     * @param text the text to send
+     */
     protected void sendKeys(By locator, String text) {
         WebElement element = waitForElementVisible(locator);
         element.clear();
         element.sendKeys(text);
     }
 
+    /**
+     * Checks if an element is displayed on the page.
+     * Uses a short timeout (500ms) to avoid long delays when element is not present.
+     * @param locator the By locator to find the element
+     * @return true if the element is displayed, false otherwise
+     */
     protected boolean isElementDisplayed(By locator) {
         try {
             // Use a short timeout to avoid long delays when element is not present
@@ -56,10 +108,18 @@ public class BasePage {
         }
     }
 
+    /**
+     * Navigates to the specified URL.
+     * @param url the URL to navigate to
+     */
     protected void navigateTo(String url) {
         driver.get(url);
     }
 
+    /**
+     * Gets the current page title.
+     * @return the page title
+     */
     protected String getPageTitle() {
         return driver.getTitle();
     }
