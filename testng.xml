@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="2kdb.net Cross-Browser Tests" verbose="1">
+    <!-- Listeners for test events -->
+    <listeners>
+        <listener class-name="base.ScreenshotListener"/>
+    </listeners>
+    
     <!-- Test configuration for Chrome browser -->
     <test name="Chrome Tests">
         <parameter name="browser" value="chrome"/>
