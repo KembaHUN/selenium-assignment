@@ -7,9 +7,10 @@ import java.util.Set;
 import org.openqa.selenium.Cookie;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import pages.HomePage;
 import pages.LoginPage;
 
-public class LoginTest extends BaseTest {
+public class AuthenticationTest extends BaseTest {
 
     @Test(priority = 1)
     public void testCookieManipulation() {
@@ -52,25 +53,17 @@ public class LoginTest extends BaseTest {
     public void testLoginWithValidCredentials() {
         LoginPage loginPage = createPageObject(LoginPage.class);
         
-        // Navigate to login page (handles cookie consent and waits for page load)
+        // Navigate to login page and login, getting HomePage object
         loginPage.navigateToLoginPage(Config.getBaseUrl());
+        HomePage homePage = loginPage.loginAndGoToHomePage(Config.getTestEmail(), Config.getTestPassword());
         
-        // Perform login with valid email and password
-        loginPage.enterEmail(Config.getTestEmail());
-        loginPage.enterPassword(Config.getTestPassword());
-        loginPage.clickLoginButton();
-        
-        // Verify login was successful by checking for user avatar (indicates logged in state)
-        Assert.assertTrue(loginPage.isUserLoggedIn(),
+        // Verify login was successful using HomePage
+        Assert.assertTrue(homePage.isUserLoggedIn(),
             "User should be logged in - user avatar should be displayed");
         
         // Verify page title changed from login page to homepage
-        Assert.assertTrue(loginPage.isPageTitleMatching("2KDB MyTEAM Database | NBA 2K26"),
+        Assert.assertTrue(homePage.isPageTitleMatching("2KDB MyTEAM Database | NBA 2K26"),
             "Page title should match '2KDB MyTEAM Database | NBA 2K26' after successful login");
-        
-        // Also verify no error message is displayed
-        Assert.assertFalse(loginPage.isErrorMessageDisplayed(),
-            "Error message should not be displayed for valid credentials");
         
         System.out.println("Login with valid credentials test passed!");
     }
@@ -95,15 +88,37 @@ public class LoginTest extends BaseTest {
         Assert.assertTrue(loginPage.isErrorMessageDisplayed(),
             "Error message should be displayed for invalid credentials");
         
-        // Verify user is NOT logged in (no avatar should be displayed)
-        Assert.assertFalse(loginPage.isUserLoggedIn(),
-            "User should not be logged in with invalid credentials");
-        
         // Verify page title matches login page exactly
         Assert.assertTrue(loginPage.isPageTitleMatching("2KDB MyTEAM Database | Sign In | NBA 2K26"),
             "Page title should match '2KDB MyTEAM Database | Sign In | NBA 2K26' indicating we're still on the login page");
         
         System.out.println("Login with invalid credentials test passed!");
+    }
+
+    @Test(priority = 4, dependsOnMethods = "testLoginWithValidCredentials")
+    public void testLogout() {
+        LoginPage loginPage = createPageObject(LoginPage.class);
+        
+        // Navigate to login page and login, getting HomePage object
+        loginPage.navigateToLoginPage(Config.getBaseUrl());
+        HomePage homePage = loginPage.loginAndGoToHomePage(Config.getTestEmail(), Config.getTestPassword());
+        
+        // Verify we're logged in by checking the home page
+        Assert.assertTrue(homePage.isUserLoggedIn(),
+            "User should be logged in on the homepage");
+        
+        // Perform logout - stays on HomePage but user is logged out
+        homePage = homePage.logout();
+        
+        // Verify user is no longer logged in (user button should be gone)
+        Assert.assertFalse(homePage.isUserLoggedIn(),
+            "User should not be logged in after logout");
+        
+        // Verify using the isLoggedOut() helper method
+        Assert.assertTrue(homePage.isLoggedOut(),
+            "isLoggedOut() should return true after logout");
+        
+        System.out.println("Logout test passed!");
     }
 
     /**

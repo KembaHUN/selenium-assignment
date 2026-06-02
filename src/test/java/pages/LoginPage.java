@@ -13,8 +13,6 @@ public class LoginPage extends BasePage {
     private static final By PASSWORD_INPUT = By.name("password");
     private static final By LOGIN_BUTTON = By.cssSelector("button[type='submit']");
     private static final By ERROR_MESSAGE = By.cssSelector(".mantine-InputWrapper-error");
-    private static final By USER_BUTTON = By.xpath("//button[contains(@class, 'mantine-Button-root') and .//div[contains(@class, 'mantine-Avatar-root')]]");
-    private static final By LOGOUT_BUTTON = By.xpath("//div[contains(@class, 'lucide-log-out')]");
 
     public LoginPage(WebDriver driver) {
         super(driver);
@@ -67,19 +65,29 @@ public class LoginPage extends BasePage {
         return this;
     }
 
-    public LoginPage login(String email, String password) {
+    /**
+     * Logs in with valid credentials and returns a HomePage object.
+     * This method should be used when you want to continue testing authenticated features.
+     * @param email the user email
+     * @param password the user password
+     * @return HomePage object representing the authenticated homepage
+     */
+    public HomePage loginAndGoToHomePage(String email, String password) {
         enterEmail(email);
         enterPassword(password);
         clickLoginButton();
-        return this;
+        // Wait for redirect to homepage
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.not(ExpectedConditions.urlContains("auth/signin")));
+        } catch (Exception e) {
+            // Continue anyway, we'll verify in the test
+        }
+        return new HomePage(driver);
     }
 
     public boolean isErrorMessageDisplayed() {
         return isElementDisplayed(ERROR_MESSAGE);
-    }
-
-    public String getErrorMessageText() {
-        return getElementText(ERROR_MESSAGE);
     }
 
     public boolean isEmailInputDisplayed() {
@@ -88,38 +96,6 @@ public class LoginPage extends BasePage {
 
     public boolean isPasswordInputDisplayed() {
         return isElementDisplayed(PASSWORD_INPUT);
-    }
-
-    /**
-     * Checks if the user is logged in by verifying:
-     * 1. The page title indicates we're on the homepage (not login page)
-     * 2. The user button with avatar is present in the DOM
-     * @return true if user is logged in
-     */
-    public boolean isUserLoggedIn() {
-        // First verify we're on the homepage by checking the title
-        String title = driver.getTitle();
-        if (!title.equals("2KDB MyTEAM Database | NBA 2K26")) {
-            // On login page or unknown page
-            return false;
-        }
-        
-        try {
-            // Look for the user button containing an avatar with a very short timeout
-            new WebDriverWait(driver, Duration.ofMillis(500))
-                .until(ExpectedConditions.presenceOfElementLocated(USER_BUTTON));
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    /**
-     * Checks if the logout button is displayed in the user menu.
-     * @return true if logout button is displayed
-     */
-    public boolean isLogoutButtonDisplayed() {
-        return isElementDisplayed(LOGOUT_BUTTON);
     }
 
     /**

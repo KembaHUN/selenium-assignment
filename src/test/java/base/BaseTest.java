@@ -1,5 +1,10 @@
 package base;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
+import java.lang.reflect.Constructor;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -8,14 +13,8 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-
-import java.lang.reflect.Constructor;
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 
 public class BaseTest {
 

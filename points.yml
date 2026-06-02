@@ -61,7 +61,7 @@ basic:
     description: "Submit a form that requires a registered/logged-in user"
 
   logout:                    # 2 pts | once
-    done: false
+    done: true
     description: "Log out from the application and verify it"
 
   fill_input:                # 1 pt each | repeatable | max 10
@@ -102,7 +102,7 @@ basic:
     description: "Project has at least 4 Java classes"
 
   at_least_6_classes:        # 3 pts | once
-    done: false
+    done: true
     description: "Project has at least 6 Java classes (cumulative with above)"
 
   at_least_8_classes:        # 3 pts | once
@@ -115,7 +115,7 @@ basic:
     link: "https://www.selenium.dev/documentation/webdriver/waits/"
 
   page_title:                # 1 pt | once
-    done: false
+    done: true
     description: "Read and verify the page title using getTitle()"
 
   page_object_pattern:       # 3 pts | once
